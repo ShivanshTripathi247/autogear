@@ -10,7 +10,7 @@ import { CheckIcon } from "lucide-react";
 
 export default function Home() {
   return (
-    <main className="relative w-full">
+    <main className="relative w-full mb-20">
       <Navbar />
       
       {/* Hero Section */}
