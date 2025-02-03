@@ -6,6 +6,8 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { EditUserProfile } from '@/lib/types'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '../ui/form'
 import { Input } from '../ui/input'
+import { Button } from '../ui/button'
+import { Loader2 } from 'lucide-react'
 type Props = {}
 
 const ProfileForm = (props: Props) => {
@@ -41,7 +43,7 @@ const ProfileForm = (props: Props) => {
         </form>
         <form className='flex flex-col gap-6'>
             <FormField 
-            disabled={isLoading}
+            disabled={true}
             control={form.control}
             name="email"
             render={({ field }) => (
@@ -59,6 +61,19 @@ const ProfileForm = (props: Props) => {
                 </FormItem>
             )}
             />
+            <Button type='submit'
+             disabled={isLoading}
+             className='self-start hover:bg-[#2F006B] hover:text-white'
+             >
+             {isLoading ? (<>
+                <Loader2 className='mr-2 h-4 w-4 animate-spin'/>
+                Saving
+             </>  
+             ) : (
+                'Save User Settings'
+             )}
+              </Button>
+
         </form>
     </Form>
   )
