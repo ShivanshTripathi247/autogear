@@ -1,7 +1,7 @@
-import { Cog, CogIcon, MenuIcon } from 'lucide-react'
-import { Span } from 'next/dist/trace/trace'
+import { CogIcon, MenuIcon } from 'lucide-react'
 import Link from 'next/link'
 import React from 'react'
+
 
 type Props = {}
 
