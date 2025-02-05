@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { DM_Sans, DM_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "../providers/theme-provider";
+import { ClerkProvider } from "@clerk/nextjs";
+import { SignInButton, SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
@@ -17,7 +19,7 @@ const dmMono = DM_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Autogear",
+  title: "AutoGear",
   description: "Automates your needs for your business",
 };
 
@@ -27,10 +29,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
+    <ClerkProvider>
     <html lang="en">
       <body
         className={`${dmSans.variable} ${dmMono.variable} antialiased`}
       >
+        <SignedOut>
+            <SignInButton />
+          </SignedOut>
+          <SignedIn>
+            <UserButton />
+          </SignedIn>
         <ThemeProvider
           attribute="class"
           defaultTheme="dark"
@@ -41,5 +50,6 @@ export default function RootLayout({
         </ThemeProvider>
       </body>
     </html>
+    </ClerkProvider>
   );
 }
