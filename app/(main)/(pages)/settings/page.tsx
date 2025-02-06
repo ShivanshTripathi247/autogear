@@ -1,24 +1,25 @@
 import ProfileForm from '@/components/forms/profile-form'
 import React from 'react'
 import ProfilePicture from './_components/profile-picture'
+import { db } from '@/lib/db'
 
 
 type Props = {}
 
 const Settings = (props: Props) => {
   //Wip profile pricture
-  // const removeProfilePicture = async () => {
-  //   'use server'
-  //   const response = await db.user.update({
-  //     where: {
-  //       clerkId: authUser.id,
-  //     },
-  //     data: {
-  //       profileImage : '',
-  //     },
-  //   })
-  //   return response
-  // }
+  const removeProfilePicture = async () => {
+    'use server'
+    const response = await db.user.update({
+      where: {
+        clerkId: authUser.id,
+      },
+      data: {
+        profileImage : '',
+      },
+    })
+    return response
+  }
 
   return (
     <div className='flex flex-col gap-4'>

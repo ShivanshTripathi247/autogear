@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { EditUserProfile } from '@/lib/types'
+import { EditUserProfileSchema } from '@/lib/types'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '../ui/form'
 import { Input } from '../ui/input'
 import { Button } from '../ui/button'
@@ -12,10 +12,11 @@ type Props = {}
 
 const ProfileForm = (props: Props) => {
     const [isLoading, setIsLoading] = useState(false)
-    const form = useForm<z.infer<typeof EditUserProfile>>({
+    const form = useForm<z.infer<typeof EditUserProfileSchema>>({
         mode: "onChange",
-        resolver: zodResolver(EditUserProfile),
+        resolver: zodResolver(EditUserProfileSchema),
         defaultValues: {
+
             name: "",
             email: "",
         },

@@ -1,3 +1,4 @@
+import { UserButton } from '@clerk/nextjs'
 import { CogIcon, MenuIcon } from 'lucide-react'
 import Link from 'next/link'
 import React from 'react'
@@ -54,9 +55,10 @@ const Navbar = async (props: Props) => {
             
             {/* TODO: Add user */}
             {true ? 'Dashboard' : 'Get Started'}
-          </span>
+          </span> 
         </Link>
         {/* TODO: Add user */}
+        <UserButton />
         <MenuIcon className='md:hidden'/>
         </aside>
      </header>

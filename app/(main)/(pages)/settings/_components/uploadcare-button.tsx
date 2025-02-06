@@ -25,12 +25,14 @@ function UploadCareButton() {
   return (
     <div className="p-4 rounded-lg max-w-md mx-auto">
       <h2 className="text-xl font-semibold mb-4 text-center">Upload Profile Picture</h2>
+      <div className='flex justify-center items-center'>
       <FileUploaderRegular
-        sourceList={['local', 'camera']}
         className="uc-dark"
         pubkey="cd8a3dedcd5f41444b83"
         onChange={handleChangeEvent}
-      />
+
+      /></div>
+
 
       {file && (
         <div className="mt-6 flex flex-col items-center">
