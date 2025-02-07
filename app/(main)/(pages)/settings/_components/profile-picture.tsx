@@ -18,7 +18,8 @@ type Props = {
         {userImage ? (
           <>
             <Image src={userImage} alt='profile picture' height={100} width={100} />
-            <Button onClick={onDelete}>Remove Profile Picture</Button>
+            <Button onClick={onDelete}
+            className='self-start hover:bg-[#2F006B] hover:text-white'>Remove Profile Picture</Button>
           </>
         ) : (
           <UploadCareButton onUpload={onUpload} />
