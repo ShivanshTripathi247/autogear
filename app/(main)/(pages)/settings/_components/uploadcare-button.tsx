@@ -5,6 +5,7 @@ import { FileUploaderRegular } from '@uploadcare/react-uploader/next'
 import '@uploadcare/react-uploader/core.css'
 import { uploadFile } from '@uploadcare/upload-client'
 import Image from 'next/image'
+import { env } from 'process'
 
 interface UploadCareButtonProps {
   onUpload: (url: string) => Promise<void>
@@ -27,21 +28,10 @@ const UploadCareButton: React.FC<UploadCareButtonProps> = ({
     
     if (successfulFile) {
       try {
-        const result = await uploadFile(successfulFile.file, {
-          publicKey: 'cd8a3dedcd5f41444b83',
-          store: 'auto',
-          metadata: { 
-            subsystem: 'js-client',
-            persistent: 'true'  // Ensure permanent storage
-          }
-        })
-        
-        // Store base URL without transformations
-        const baseUrl = result.cdnUrl
-        setFile(result)
-        setCurrentImage(baseUrl)
-        await onUpload(baseUrl)
-        
+        const cdnUrl = successfulFile.fileInfo.cdnUrl
+        setFile(successfulFile.fileInfo)
+        setCurrentImage(cdnUrl)
+        await onUpload(cdnUrl)
       } catch (error) {
         console.error('Upload failed:', error)
       }
@@ -54,7 +44,7 @@ const UploadCareButton: React.FC<UploadCareButtonProps> = ({
       <div className='flex justify-center items-center'>
         <FileUploaderRegular
           className="uc-dark"
-          pubkey="cd8a3dedcd5f41444b83"
+          pubkey={process.env.NEXT_PUBLIC_UPLOADCARE_PUBLIC_KEY}
           onChange={handleChangeEvent}
         />
       </div>

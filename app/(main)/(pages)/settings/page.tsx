@@ -14,10 +14,37 @@ const Settings = async () => {
   const user = await db.user.findUnique({ where: { clerkId: authUser.id } })
   const removeProfileImage = async () => {
     'use server'
+    
+    // Get the current profile image URL before updating
+    const currentUser = await db.user.findUnique({
+      where: { clerkId: authUser.id },
+      select: { profileImage: true }
+    });
+  
+    // Update the database to remove the image URL
     const response = await db.user.update({
       where: { clerkId: authUser.id },
       data: { profileImage: '' },
     });
+  
+    // If there was a previous image, delete it from Uploadcare
+    if (currentUser?.profileImage) {
+      try {
+        const fileUuid = currentUser.profileImage.split('/').pop()?.split('-')[0];
+        if (fileUuid) {
+          await fetch(`https://api.uploadcare.com/files/${fileUuid}/`, {
+            method: 'DELETE',
+            headers: {
+              'Authorization': `Uploadcare.Simple ${process.env.NEXT_PUBLIC_UPLOADCARE_PUBLIC_KEY}:${process.env.NEXT_PUBLIC_UPLOADCARE_SECRET_KEY}`,
+              'Accept': 'application/vnd.uploadcare-v0.7+json'
+            }
+          });
+        }
+      } catch (error) {
+        console.error('Failed to delete image from Uploadcare:', error);
+      }
+    }
+  
     revalidatePath('/settings');
     return response;
   }
