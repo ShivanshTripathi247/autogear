@@ -21,29 +21,43 @@ const Settings = async () => {
       select: { profileImage: true }
     });
   
-    // Update the database to remove the image URL
+    if (currentUser?.profileImage) {
+      try {
+        // Improved UUID extraction
+        const url = new URL(currentUser.profileImage);
+        const pathParts = url.pathname.split('/');
+        const fileUuid = pathParts[1]; // More reliable extraction from URL structure
+  
+        if (fileUuid) {
+          // Use the correct Uploadcare deletion endpoint
+          const response = await fetch(
+            `https://api.uploadcare.com/files/${fileUuid}/storage/`,
+            {
+              method: 'DELETE',
+              headers: {
+                'Authorization': `Uploadcare.Simple ${process.env.NEXT_PUBLIC_UPLOADCARE_PUBLIC_KEY}:${process.env.NEXT_PUBLIC_UPLOADCARE_SECRET_KEY}`,
+                'Accept': 'application/vnd.uploadcare-v0.7+json'
+              }
+            }
+          );
+          
+          if (!response.ok) {
+            const error = await response.json();
+            console.error('Uploadcare deletion failed:', error);
+            throw new Error('Failed to delete image from storage');
+          }
+        }
+      } catch (error) {
+        console.error('Uploadcare deletion error:', error);
+        throw error;
+      }
+    }
+  
+    // Update the database
     const response = await db.user.update({
       where: { clerkId: authUser.id },
       data: { profileImage: '' },
     });
-  
-    // If there was a previous image, delete it from Uploadcare
-    if (currentUser?.profileImage) {
-      try {
-        const fileUuid = currentUser.profileImage.split('/').pop()?.split('-')[0];
-        if (fileUuid) {
-          await fetch(`https://api.uploadcare.com/files/${fileUuid}/`, {
-            method: 'DELETE',
-            headers: {
-              'Authorization': `Uploadcare.Simple ${process.env.NEXT_PUBLIC_UPLOADCARE_PUBLIC_KEY}:${process.env.NEXT_PUBLIC_UPLOADCARE_SECRET_KEY}`,
-              'Accept': 'application/vnd.uploadcare-v0.7+json'
-            }
-          });
-        }
-      } catch (error) {
-        console.error('Failed to delete image from Uploadcare:', error);
-      }
-    }
   
     revalidatePath('/settings');
     return response;
