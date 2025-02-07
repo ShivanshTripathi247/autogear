@@ -1,5 +1,5 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -8,33 +8,56 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '../ui/input'
 import { Button } from '../ui/button'
 import { Loader2 } from 'lucide-react'
-type Props = {}
+import { User } from '@clerk/nextjs/server'
+type Props = {
+    user: User
+    onSubmit: (name: string) => Promise<void>
+}
 
-const ProfileForm = (props: Props) => {
+
+const ProfileForm = ({user, onSubmit}: Props) => {
     const [isLoading, setIsLoading] = useState(false)
     const form = useForm<z.infer<typeof EditUserProfileSchema>>({
         mode: "onChange",
+
         resolver: zodResolver(EditUserProfileSchema),
         defaultValues: {
-
-            name: "",
-            email: "",
+            name: user?.name,
+            email: user?.email,
         },
     });
+    const handleSubmit = async (values: z.infer<typeof EditUserProfileSchema>) => {
+        setIsLoading(true)
+        await onSubmit(values?.name)
+        setIsLoading(false)
+    }
+    useEffect(() => {
+        form.reset({
+            name: user?.name,
+            email: user?.email,
+        })
+    }, [user])
+
+
+
   return (
     <Form {...form}>
-        <form className='flex flex-col gap-6'>
+
+        <form className='flex flex-col gap-6'
+        onSubmit={form.handleSubmit(handleSubmit)}>
             <FormField 
             disabled={isLoading}
             control={form.control}
+
             name="name"
             render={({ field }) => (
                 <FormItem>
                     <FormLabel className='text-lg'>User full name</FormLabel>
                     <FormControl>
                         <Input
-                        placeholder='Enter your full name'
                         {...field}
+                        placeholder='Enter your full name'
+                        
                         />
                     </FormControl>
                     <FormMessage />
@@ -52,10 +75,10 @@ const ProfileForm = (props: Props) => {
                     <FormLabel className='text-lg'>User email</FormLabel>
                     <FormControl>
                         <Input
+                        {...field}
                         placeholder='Enter your email'
                         type='email'
-                        disabled={isLoading}
-                        {...field}
+                        disabled={isLoading}                        
                         />
                     </FormControl>
                     <FormMessage />
@@ -64,6 +87,7 @@ const ProfileForm = (props: Props) => {
             />
             <Button type='submit'
              disabled={isLoading}
+             onClick={form.handleSubmit(handleSubmit)}
              className='self-start hover:bg-[#2F006B] hover:text-white'
              >
              {isLoading ? (<>

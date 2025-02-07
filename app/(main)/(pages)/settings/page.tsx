@@ -72,6 +72,19 @@ const Settings = async () => {
     revalidatePath('/settings');
     return response;
   }
+  const updateUserInfo = async (name: string) => {
+    'use server'
+    const updatedUser = await db.user.update({
+      where: { clerkId: authUser.id },
+
+      data: {
+        name,
+      },
+    });
+    revalidatePath('/settings');
+    return updatedUser;
+  }
+
 
   return (
     <>
@@ -97,10 +110,14 @@ const Settings = async () => {
 
 
 
-        <ProfileForm />
+        <ProfileForm
+          user={user}
+          onSubmit={updateUserInfo}
+        />
       </div>
 
     </div>
+
 
 
   </>
