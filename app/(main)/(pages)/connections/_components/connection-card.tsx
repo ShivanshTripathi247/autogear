@@ -47,7 +47,7 @@ const ConnectionCard = ({
                 //     Connected
                 // </div>
             ) : ( */}
-                <Link2
+                <Link
                 href={
                     title == 'Discord'
                     ? process.env.NEXT_PUBLIC_DISCORD_REDIRECT!
@@ -59,7 +59,7 @@ const ConnectionCard = ({
                 }
                 className='rounded-lg bg-primary p-2 font-bold text-primary-foreground flex gap-2'
                 >
-                    Connect <Link/>
+                    Connect <Link2/>
                 </Link>
             {/* )
 
