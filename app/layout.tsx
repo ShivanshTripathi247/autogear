@@ -1,3 +1,4 @@
+
 import type { Metadata } from "next";
 import { DM_Sans } from "next/font/google";
 import "./globals.css";
@@ -10,6 +11,7 @@ import { ThemeProvider } from "../providers/theme-provider";
   SignedOut,
   UserButton,
 } from '@clerk/nextjs'
+import ModalProvider from "@/providers/modal-provider";
 
 const dmSans = DM_Sans({  subsets: ["latin"],});
 
@@ -36,7 +38,9 @@ export default function RootLayout({
               enableSystem
               disableTransitionOnChange
             >
+              <ModalProvider>
               {children}
+              </ModalProvider>
             </ThemeProvider>
           </body>
         </html>
