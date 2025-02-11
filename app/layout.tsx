@@ -12,6 +12,7 @@ import { ThemeProvider } from "../providers/theme-provider";
   UserButton,
 } from '@clerk/nextjs'
 import ModalProvider from "@/providers/modal-provider";
+import { Toaster } from "sonner";
 
 const dmSans = DM_Sans({  subsets: ["latin"],});
 
@@ -40,6 +41,7 @@ export default function RootLayout({
             >
               <ModalProvider>
               {children}
+              <Toaster/>
               </ModalProvider>
             </ThemeProvider>
           </body>

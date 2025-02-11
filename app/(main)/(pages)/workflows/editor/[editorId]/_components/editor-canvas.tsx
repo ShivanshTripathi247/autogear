@@ -1,6 +1,6 @@
 'use client'
-import React, { useCallback, useEffect, useMemo } from 'react'
-import { addEdge, Background, Connection, Controls, Edge, EdgeChange, NodeChange, ReactFlow, useNodeConnections } from '@xyflow/react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import { addEdge, Background, Connection, Controls, Edge, EdgeChange, NodeChange, ReactFlow, ReactFlowInstance, useNodeConnections } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import { EditorCanvasCardType, EditorNodeType } from '@/lib/types';
 import { useEditor } from '@/providers/editor-provider';
@@ -13,29 +13,38 @@ import {
   } from "@/components/ui/resizable"
 import { toast } from 'sonner';
 import { EditorCanvasDefaultCardTypes } from '@/lib/constants';
+import { usePathname } from 'next/navigation';
+import { v4 } from 'uuid'
 
 
 type Props = {}
 
-const initialNode: EditorNodeType[] = []
+const initialNodes: EditorNodeType[] = []
 
-const initialEdges: { id: string; sources: string; target: string }[] = []
+const initialEdges: { id: string; source: string; target: string }[] = []
 
 const EditorCanvas = (props: Props) => {
     const { dispatch, state } = useEditor()
+    const [nodes, setNodes] = useState(initialNodes)
+    const [edges, setEdges] = useState(initialEdges)
+    const [
+      reactFlowInstance, 
+      setReactFlowInstance] = useState<ReactFlowInstance>()
+    const pathname = usePathname()
+
     const onDragOver = useCallback((event: any) => {
         event.preventDefault()
         event.dataTransfer.dropEffect = 'move'
       }, [])
-    
+
       const onNodesChange = useCallback(
         (changes: NodeChange[]) => {
           //@ts-ignore
           setNodes((nds) => applyNodeChanges(changes, nds))
         },
         [setNodes]
-      )
-    
+      ) 
+
       const onEdgesChange = useCallback(
         (changes: EdgeChange[]) =>
           //@ts-ignore
@@ -47,7 +56,7 @@ const EditorCanvas = (props: Props) => {
         (params: Edge | Connection) => setEdges((eds) => addEdge(params, eds)),
         []
       )
-    
+
       const onDrop = useCallback(
         (event: any) => {
           event.preventDefault()
@@ -98,9 +107,31 @@ const EditorCanvas = (props: Props) => {
         [reactFlowInstance, state]
       )
     
+      const handleClickCanvas = () => {
+        dispatch({
+          type: 'SELECTED_ELEMENT',
+          payload: {
+            element: {
+              data: {
+                completed: false,
+                current: false,
+                description: '',
+                metadata: {},
+                title: '',
+                type: 'Trigger',
+              },
+              id: '',
+              position: { x: 0, y: 0 },
+              type: 'Trigger',
+            },
+          },
+        })
+      }
+    
       useEffect(() => {
         dispatch({ type: 'LOAD_DATA', payload: { edges, elements: nodes } })
       }, [nodes, edges])
+
 
     const nodeTypes = useMemo(
     () => ({
