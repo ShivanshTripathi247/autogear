@@ -1,6 +1,6 @@
 'use client'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
-import { addEdge, Background, Connection, Controls, Edge, EdgeChange, MiniMap, NodeChange, ReactFlow, ReactFlowInstance, useNodeConnections } from '@xyflow/react';
+import { addEdge, applyNodeChanges, Background, Connection, Controls, Edge, EdgeChange, MiniMap, NodeChange, ReactFlow, ReactFlowInstance, useNodeConnections } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import { EditorCanvasCardType, EditorNodeType } from '@/lib/types';
 import { useEditor } from '@/providers/editor-provider';
