@@ -16,3 +16,13 @@ type AutoGearStore = {
     selectedSlackChannels: Option[]
     setSelectedSlackChannels: (selectedSlackChannels: Option[]) => void
 }
+
+export const useAutoGearStore = create<AutoGearStore>()((set) => ({
+    googleFile: {},
+    setGoogleFile: (googleFile: any) => set ({ googleFile }),
+    slackChannels: [],
+    setSlackChannels: (slackChannels: Option[]) => set({slackChannels}),
+    selectedSlackChannels: [],
+    setSelectedSlackChannels: (selectedSlackChannels: Option[]) =>
+        set({selectedSlackChannels}),
+}))

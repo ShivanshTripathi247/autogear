@@ -1,7 +1,7 @@
 'use client'
 import { EditorCanvasCardType } from '@/lib/types'
 import { useEditor } from '@/providers/editor-provider'
-import { Position, useNodeId } from '@xyflow/react'
+import { Position } from '@xyflow/react'
 import React, { useMemo } from 'react'
 import EditorCanvasCardIconHelper from './editor-canvas-card-icon-helper'
 import CustomHandle from './custom-handle'
@@ -11,9 +11,8 @@ import clsx from 'clsx'
 
 type Props = {}
 
-const EditorCanvasCardSingle = ({ data }: { data: EditorCanvasCardType }) => {
+const EditorCanvasCardSingle = ({ data, id }: { data: EditorCanvasCardType; id: string }) => {
     const { dispatch, state } = useEditor()
-    const nodeId = useNodeId
     const logo = useMemo(() => {
         return <EditorCanvasCardIconHelper type={data.type} />
     }, [data])
@@ -29,14 +28,13 @@ const EditorCanvasCardSingle = ({ data }: { data: EditorCanvasCardType }) => {
     <Card 
     onClick={(e) => {
         e.stopPropagation()
-        const val = state.editor.elements.find((n) => n.id === nodeId)
-        if (val)
+        const val = state.editor.elements.find((n) => n.id === id)
+        if (val) {
             dispatch({
                 type: 'SELECTED_ELEMENT',
-                payload: {
-                    element: val,
-                },
-        })
+                payload: { element: val }
+            })
+        }
     }}
     className='relative max-w-[400px] dark:border-muted-foreground/70'
     >
@@ -44,12 +42,12 @@ const EditorCanvasCardSingle = ({ data }: { data: EditorCanvasCardType }) => {
             <div>{logo}</div>
             <div>
                 <CardTitle className='text-md'>
-                    {data.title}
+                    {data.type}
                 </CardTitle>
                 <CardDescription>
                 <p>
                     <b className='text-muted-foreground/80'>ID: </b>
-                    {nodeId}
+                    {id}
                 </p>
                 <p>{data.description}</p>
                 </CardDescription>                

@@ -6,21 +6,26 @@ import { CONNECTIONS, EditorCanvasDefaultCardTypes } from '@/lib/constants'
 import { EditorCanvasTypes, EditorNodeType } from '@/lib/types'
 import { useNodeConnections } from '@/providers/connections-provider'
 import { useEditor } from '@/providers/editor-provider'
-import React from 'react'
+import React, { useEffect } from 'react'
 import EditorCanvasIconHelper from './editor-canvas-card-icon-helper'
 import { onDragStart } from '@/lib/editor-utils'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
 import RenderConnectionAccordion from './render-connection-accordion'
-import RenderOutputAccordian from './render-output-accordian'
+import { useAutoGearStore } from '@/store'
+//import RenderOutputAccordian from './render-output-accordian'
 
 type Props = {
-    nodes: EditorNodeType[]
-  }
+  nodes: EditorNodeType[]
+}
 
 const EditorCanvasSidebar = ({ nodes }: Props) => {
-    //WIP
-    const { state } = useEditor()
-    const { nodeConnection } = useNodeConnections()
+  const { state } = useEditor()
+  const { nodeConnection } = useNodeConnections()
+  const { googleFile, setSlackChannels } = useAutoGearStore()
+
+
+
+
   return (
     <aside>
       <Tabs
@@ -60,10 +65,13 @@ const EditorCanvasSidebar = ({ nodes }: Props) => {
                 </CardHeader>
               </Card>
             ))}
-        </TabsContent>      
-        <TabsContent value='setting' className='-mt-6'>
-        <div className="px-2 py-4 text-center text-xl font-bold">
-            {state.editor.selectedNode.data.title}
+        </TabsContent>
+        <TabsContent
+          value="settings"
+          className="-mt-6"
+        >
+          <div className="px-2 py-4 text-center text-xl font-bold">
+            {state.editor.selectedNode?.data?.title ?? 'No node selected'}
           </div>
 
           <Accordion type="multiple">
@@ -91,14 +99,14 @@ const EditorCanvasSidebar = ({ nodes }: Props) => {
               <AccordionTrigger className="!no-underline">
                 Action
               </AccordionTrigger>
-              <RenderOutputAccordian
+              {/* <RenderOutputAccordion
                 state={state}
                 nodeConnection={nodeConnection}
-              />
+              /> */}
             </AccordionItem>
           </Accordion>
         </TabsContent>
-        </Tabs>
+      </Tabs>
     </aside>
   )
 }
