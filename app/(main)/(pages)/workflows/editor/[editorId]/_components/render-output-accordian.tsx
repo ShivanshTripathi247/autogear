@@ -1,11 +1,31 @@
+import { ConnectionProviderProps } from '@/providers/connections-provider'
+import { EditorState } from '@/providers/editor-provider'
+import { useAutoGearStore } from '@/store'
 import React from 'react'
+import ContentBasedOnTitle from './content-based-on-title'
 
-type Props = {}
+type Props = {
+  state: EditorState
+  nodeConnection: ConnectionProviderProps
+}
 
-const RenderOutputAccordian = (props: Props) => {
+const RenderOutputAccordion = ({ state, nodeConnection }: Props) => {
+  const {
+    googleFile,
+    setGoogleFile,
+    selectedSlackChannels,
+    setSelectedSlackChannels,
+  } = useAutoGearStore()
   return (
-    <div>RenderOutputAccordian</div>
+    <ContentBasedOnTitle
+      nodeConnection={nodeConnection}
+      newState={state}
+      file={googleFile}
+      setFile={setGoogleFile}
+      selectedSlackChannels={selectedSlackChannels}
+      setSelectedSlackChannels={setSelectedSlackChannels}
+    />
   )
 }
 
-export default RenderOutputAccordian
+export default RenderOutputAccordion

@@ -28,6 +28,7 @@ import { v4 } from 'uuid'
 import { EditorCanvasDefaultCardTypes } from '@/lib/constants'
 import FlowInstance from './flow-instance'
 import EditorCanvasSidebar from './editor-canvas-sidebar'
+import { onGetNodesEdges } from '../../../_actions/workflow-connections'
 
 type Props = {}
 
@@ -105,7 +106,7 @@ const EditorCanvas = (props: Props) => {
         type,
         position,
         data: {
-          title: EditorCanvasDefaultCardTypes[type].title,
+          title: type,
           description: EditorCanvasDefaultCardTypes[type].description,
           completed: false,
           current: false,
@@ -113,7 +114,6 @@ const EditorCanvas = (props: Props) => {
           type: type,
         },
       }
-      console.log('New node created:', newNode)
       //@ts-ignore
       setNodes((nds) => nds.concat(newNode))
     },
@@ -147,23 +147,36 @@ const EditorCanvas = (props: Props) => {
 
   const nodeTypes = useMemo(
     () => ({
-      Action: (props) => <EditorCanvasCardSingle {...props} />,
-      Trigger: (props) => <EditorCanvasCardSingle {...props} />,
-      Email: (props) => <EditorCanvasCardSingle {...props} />,
-      Condition: (props) => <EditorCanvasCardSingle {...props} />,
-      AI: (props) => <EditorCanvasCardSingle {...props} />,
-      Slack: (props) => <EditorCanvasCardSingle {...props} />,
-      'Google Drive': (props) => <EditorCanvasCardSingle {...props} />,
-      Notion: (props) => <EditorCanvasCardSingle {...props} />,
-      Discord: (props) => <EditorCanvasCardSingle {...props} />,
-      'Custom Webhook': (props) => <EditorCanvasCardSingle {...props} />,
-      'Google Calendar': (props) => <EditorCanvasCardSingle {...props} />,
-      Wait: (props) => <EditorCanvasCardSingle {...props} />,
+      Action: EditorCanvasCardSingle,
+      Trigger: EditorCanvasCardSingle,
+      Email: EditorCanvasCardSingle,
+      Condition: EditorCanvasCardSingle,
+      AI: EditorCanvasCardSingle,
+      Slack: EditorCanvasCardSingle,
+      'Google Drive': EditorCanvasCardSingle,
+      Notion: EditorCanvasCardSingle,
+      Discord: EditorCanvasCardSingle,
+      'Custom Webhook': EditorCanvasCardSingle,
+      'Google Calendar': EditorCanvasCardSingle,
+      Wait: EditorCanvasCardSingle,
     }),
     []
   )
 
+  const onGetWorkFlow = async () => {
+    setIsWorkFlowLoading(true)
+    const response = await onGetNodesEdges(pathname.split('/').pop()!)
+    if (response) {
+      setEdges(JSON.parse(response.edges!))
+      setNodes(JSON.parse(response.nodes!))
+      setIsWorkFlowLoading(false)
+    }
+    setIsWorkFlowLoading(false)
+  }
 
+  useEffect(() => {
+    onGetWorkFlow()
+  }, [])
 
   return (
     <ResizablePanelGroup direction="horizontal">
@@ -204,18 +217,8 @@ const EditorCanvas = (props: Props) => {
                 onConnect={onConnect}
                 onInit={setReactFlowInstance}
                 fitView
-                onClick={(_, event) => {
-                    if (event.target === event.currentTarget) {
-                        handleClickCanvas()
-                    }
-                }}
+                onClick={handleClickCanvas}
                 nodeTypes={nodeTypes}
-                onNodeClick={(_, node) => {
-                    dispatch({
-                        type: 'SELECTED_ELEMENT',
-                        payload: { element: node }
-                    })
-                }}
               >
                 <Controls position="top-left" />
                 <MiniMap

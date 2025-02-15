@@ -1,18 +1,33 @@
 'use client'
-import { Card, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Separator } from '@/components/ui/separator'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { CONNECTIONS, EditorCanvasDefaultCardTypes } from '@/lib/constants'
 import { EditorCanvasTypes, EditorNodeType } from '@/lib/types'
 import { useNodeConnections } from '@/providers/connections-provider'
 import { useEditor } from '@/providers/editor-provider'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+
 import React, { useEffect } from 'react'
+import { Separator } from '@/components/ui/separator'
+import { CONNECTIONS, EditorCanvasDefaultCardTypes } from '@/lib/constants'
+import {
+  Card,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
+import {
+  fetchBotSlackChannels,
+  onConnections,
+  onDragStart,
+} from '@/lib/editor-utils'
 import EditorCanvasIconHelper from './editor-canvas-card-icon-helper'
-import { onDragStart } from '@/lib/editor-utils'
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/accordion'
 import RenderConnectionAccordion from './render-connection-accordion'
+import RenderOutputAccordion from './render-output-accordian'
 import { useAutoGearStore } from '@/store'
-//import RenderOutputAccordian from './render-output-accordian'
 
 type Props = {
   nodes: EditorNodeType[]
@@ -22,9 +37,20 @@ const EditorCanvasSidebar = ({ nodes }: Props) => {
   const { state } = useEditor()
   const { nodeConnection } = useNodeConnections()
   const { googleFile, setSlackChannels } = useAutoGearStore()
+  useEffect(() => {
+    if (state) {
+      onConnections(nodeConnection, state, googleFile)
+    }
+  }, [state])
 
-
-
+  useEffect(() => {
+    if (nodeConnection.slackNode.slackAccessToken) {
+      fetchBotSlackChannels(
+        nodeConnection.slackNode.slackAccessToken,
+        setSlackChannels
+      )
+    }
+  }, [nodeConnection])
 
   return (
     <aside>
@@ -71,7 +97,7 @@ const EditorCanvasSidebar = ({ nodes }: Props) => {
           className="-mt-6"
         >
           <div className="px-2 py-4 text-center text-xl font-bold">
-            {state.editor.selectedNode?.data?.title ?? 'No node selected'}
+            {state.editor.selectedNode.data.title}
           </div>
 
           <Accordion type="multiple">
@@ -99,10 +125,10 @@ const EditorCanvasSidebar = ({ nodes }: Props) => {
               <AccordionTrigger className="!no-underline">
                 Action
               </AccordionTrigger>
-              {/* <RenderOutputAccordion
+              <RenderOutputAccordion
                 state={state}
                 nodeConnection={nodeConnection}
-              /> */}
+              />
             </AccordionItem>
           </Accordion>
         </TabsContent>
