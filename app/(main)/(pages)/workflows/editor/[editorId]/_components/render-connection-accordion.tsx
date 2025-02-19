@@ -7,21 +7,7 @@ import { Connection } from '@/lib/types'
 import { useNodeConnections } from '@/providers/connections-provider'
 import { EditorState } from '@/providers/editor-provider'
 import { useAutoGearStore } from '@/store'
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-} from '@/components/ui/command'
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover'
-import { CheckIcon, ChevronsUpDown } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { cn } from '@/lib/utils'
+
 
 const frameworks = [
   {
